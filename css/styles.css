@@ -19,7 +19,8 @@
   --shadow-soft: 0 12px 40px rgba(28, 43, 76, 0.08);
   --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-sans: "Manrope", system-ui, sans-serif;
-  --header-h: 96px;
+  --header-h: 84px;
+  --header-blue: #24375e;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --container: 1180px;
 }
@@ -198,7 +199,7 @@ address {
   inset: 0 0 auto;
   z-index: 1000;
   height: var(--header-h);
-  background: var(--midnight);
+  background: var(--header-blue);
   border-bottom: 1px solid rgba(196, 165, 116, 0.18);
   transition: box-shadow 0.4s var(--ease);
 }
@@ -225,11 +226,11 @@ address {
 }
 
 .nav__logo {
-  width: 78px;
-  height: 78px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(196, 165, 116, 0.4);
+  border: none;
 }
 
 .nav__wordmark {
@@ -1369,12 +1370,12 @@ address {
 
 @media (max-width: 680px) {
   :root {
-    --header-h: 84px;
+    --header-h: 74px;
   }
 
   .nav__logo {
-    width: 64px;
-    height: 64px;
+    width: 58px;
+    height: 58px;
   }
 
   .services__grid,
