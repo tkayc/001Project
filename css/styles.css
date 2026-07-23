@@ -19,7 +19,7 @@
   --shadow-soft: 0 12px 40px rgba(28, 43, 76, 0.08);
   --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-sans: "Manrope", system-ui, sans-serif;
-  --header-h: 80px;
+  --header-h: 96px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --container: 1180px;
 }
@@ -198,23 +198,13 @@ address {
   inset: 0 0 auto;
   z-index: 1000;
   height: var(--header-h);
-  transition: background 0.4s var(--ease), box-shadow 0.4s var(--ease),
-    backdrop-filter 0.4s var(--ease);
+  background: var(--midnight);
+  border-bottom: 1px solid rgba(196, 165, 116, 0.18);
+  transition: box-shadow 0.4s var(--ease);
 }
 
 .site-header.is-scrolled {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 1px 0 var(--border);
-}
-
-.site-header.is-scrolled .nav__wordmark,
-.site-header.is-scrolled .nav__links a {
-  color: var(--midnight);
-}
-
-.site-header.is-scrolled .nav__toggle span {
-  background: var(--midnight);
+  box-shadow: 0 8px 28px rgba(20, 31, 56, 0.28);
 }
 
 .nav {
@@ -235,20 +225,19 @@ address {
 }
 
 .nav__logo {
-  width: 48px;
-  height: 48px;
+  width: 78px;
+  height: 78px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(196, 165, 116, 0.35);
+  border: 1px solid rgba(196, 165, 116, 0.4);
 }
 
 .nav__wordmark {
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 500;
   color: var(--white);
   letter-spacing: 0.02em;
-  transition: color 0.3s var(--ease);
 }
 
 .nav__menu {
@@ -1380,7 +1369,12 @@ address {
 
 @media (max-width: 680px) {
   :root {
-    --header-h: 70px;
+    --header-h: 84px;
+  }
+
+  .nav__logo {
+    width: 64px;
+    height: 64px;
   }
 
   .services__grid,
