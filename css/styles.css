@@ -20,7 +20,7 @@
   --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-sans: "Manrope", system-ui, sans-serif;
   --header-h: 84px;
-  --header-blue: #24375e;
+  --header-blue: #1c2b48;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --container: 1180px;
 }
