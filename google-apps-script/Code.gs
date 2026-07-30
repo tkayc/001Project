@@ -4,7 +4,9 @@
  * Saves bookings to Google Sheet, emails the team, and sends
  * a branded confirmation to the client (with logo + business name).
  *
- * IMPORTANT: After updating this file in Apps Script, redeploy:
+ * Uses MailApp (simpler permissions than GmailApp).
+ *
+ * IMPORTANT: After updating, redeploy:
  * Deploy → Manage deployments → Edit → New version → Deploy
  */
 
@@ -14,8 +16,8 @@ var CONFIG = {
   BUSINESS_NAME: 'Lumen Publicity',
   SHEET_NAME: 'Strategy Call Bookings',
   /**
-   * Paste either the Drive FILE ID only, or the full sharing URL.
-   * File ID example: 1IQDQMQBXjcBw1hP6WH_kAWN0OAL6xGme
+   * Drive FILE ID (or full sharing URL).
+   * File must be shared: Anyone with the link → Viewer
    */
   LOGO_FILE_ID: '1IQDQMQBXjcBw1hP6WH_kAWN0OAL6xGme'
 };
@@ -133,7 +135,6 @@ function getSheet_() {
     return sheet;
   }
 
-  // Upgrade older sheets that are missing the Phone column
   var firstRow = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), headers.length)).getValues()[0];
   if (String(firstRow[3] || '').toLowerCase() !== 'phone') {
     sheet.clear();
@@ -163,11 +164,12 @@ function saveToSheet_(data, timestamp) {
 
 function sendTeamNotification_(data, timestamp) {
   var subject = '[' + CONFIG.BUSINESS_NAME + '] New Strategy Call — ' + data.name;
-  var brand = emailBrandHeader_();
+  var logoHtml = emailLogoHtml_();
+
   var html =
     '<div style="background:#f7f8fa;padding:28px 14px;font-family:Arial,Helvetica,sans-serif;">' +
       '<div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #e6ebf2;padding:28px 24px;">' +
-        brand.logoHtml +
+        logoHtml +
         '<p style="margin:0 0 6px;text-align:center;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#c4a574;">' +
           escapeHtml_(CONFIG.BUSINESS_NAME) +
         '</p>' +
@@ -186,28 +188,25 @@ function sendTeamNotification_(data, timestamp) {
       '</div>' +
     '</div>';
 
-  var teamOptions = {
+  MailApp.sendEmail({
+    to: CONFIG.BUSINESS_EMAIL,
+    subject: subject,
+    body: plainFallback_(data),
     htmlBody: html,
     name: CONFIG.BUSINESS_NAME,
     replyTo: data.email
-  };
-  if (brand.hasLogo) {
-    teamOptions.inlineImages = brand.inlineImages;
-  }
-
-  // GmailApp supports inlineImages; MailApp does not
-  GmailApp.sendEmail(CONFIG.BUSINESS_EMAIL, subject, plainFallback_(data), teamOptions);
+  });
 }
 
 function sendClientConfirmation_(data, timestamp) {
   var subject = 'Confirmation: Your strategy call with ' + CONFIG.BUSINESS_NAME;
-  var brand = emailBrandHeader_();
+  var logoHtml = emailLogoHtml_();
   var firstName = data.name.split(/\s+/)[0] || data.name;
 
   var html =
     '<div style="background:#f7f8fa;padding:32px 16px;font-family:Georgia,\'Times New Roman\',serif;">' +
       '<div style="max-width:560px;margin:0 auto;background:#ffffff;padding:40px 32px;border:1px solid #e6ebf2;">' +
-        brand.logoHtml +
+        logoHtml +
         '<p style="margin:0 0 8px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#c4a574;">' +
           escapeHtml_(CONFIG.BUSINESS_NAME) +
         '</p>' +
@@ -238,42 +237,31 @@ function sendClientConfirmation_(data, timestamp) {
       '</p>' +
     '</div>';
 
-  var clientOptions = {
+  MailApp.sendEmail({
+    to: data.email,
+    subject: subject,
+    body: plainFallback_(data),
     htmlBody: html,
     name: CONFIG.BUSINESS_NAME,
     replyTo: CONFIG.BUSINESS_EMAIL
-  };
-  if (brand.hasLogo) {
-    clientOptions.inlineImages = brand.inlineImages;
-  }
-
-  GmailApp.sendEmail(data.email, subject, plainFallback_(data), clientOptions);
+  });
 }
 
-function emailBrandHeader_() {
-  var logoCid = 'lumenLogo';
-  var inlineImages = {};
-  var hasLogo = false;
-  var logoHtml =
+function emailLogoHtml_() {
+  var logoUrl = getLogoUrl_();
+  if (logoUrl) {
+    return (
+      '<img src="' + logoUrl + '" alt="' + escapeHtml_(CONFIG.BUSINESS_NAME) + '" width="88" height="88" ' +
+      'style="display:block;margin:0 auto 16px;border-radius:50%;border:0;" />'
+    );
+  }
+
+  return (
     '<div style="text-align:center;margin:0 0 16px;">' +
       '<div style="display:inline-block;width:88px;height:88px;border-radius:50%;background:#1c2b48;color:#ffffff;' +
       'font-family:Georgia,serif;font-size:28px;line-height:88px;text-align:center;">LP</div>' +
-    '</div>';
-
-  var logoBlob = getLogoBlob_();
-  if (logoBlob) {
-    hasLogo = true;
-    inlineImages[logoCid] = logoBlob;
-    logoHtml =
-      '<img src="cid:' + logoCid + '" alt="' + escapeHtml_(CONFIG.BUSINESS_NAME) + '" width="88" height="88" ' +
-      'style="display:block;margin:0 auto 16px;border-radius:50%;border:0;" />';
-  }
-
-  return {
-    logoHtml: logoHtml,
-    inlineImages: inlineImages,
-    hasLogo: hasLogo
-  };
+    '</div>'
+  );
 }
 
 function emailBrandFooter_() {
@@ -306,29 +294,22 @@ function extractFileId_(value) {
   var raw = String(value || '').trim();
   if (!raw) return '';
 
-  // Full Drive URL → file ID
   var match = raw.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) return match[1];
 
   match = raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (match && match[1]) return match[1];
 
-  // Already a bare file ID
   if (/^[a-zA-Z0-9_-]+$/.test(raw)) return raw;
 
   return '';
 }
 
-function getLogoBlob_() {
+function getLogoUrl_() {
   var fileId = extractFileId_(CONFIG.LOGO_FILE_ID);
-  if (!fileId) return null;
-
-  try {
-    return DriveApp.getFileById(fileId).getBlob().setName('lumen-logo.jpg');
-  } catch (err) {
-    // Logo failure must never block emails
-    return null;
-  }
+  if (!fileId) return '';
+  // Public Drive image link (file must be shared: Anyone with the link)
+  return 'https://drive.google.com/uc?export=view&id=' + fileId;
 }
 
 /* ========================= Shared helpers ========================= */
@@ -361,10 +342,9 @@ function jsonResponse_(payload) {
 }
 
 /**
- * Run this from Apps Script to test both emails.
- * Select testBooking_ → Run → authorize Gmail + Drive if prompted.
+ * Select testBooking → Run → Allow permissions when asked.
  */
-function testBooking_() {
+function testBooking() {
   var fakeEvent = {
     postData: {
       contents: JSON.stringify({
