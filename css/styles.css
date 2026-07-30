@@ -1128,12 +1128,28 @@ address {
   min-height: 120px;
 }
 
-.form-success {
+.form-success,
+.form-error {
   font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+}
+
+.form-success {
   color: var(--midnight);
   background: rgba(121, 162, 184, 0.15);
-  padding: 0.85rem 1rem;
   border-left: 2px solid var(--gold);
+}
+
+.form-error {
+  color: #6b2a2a;
+  background: rgba(180, 80, 80, 0.1);
+  border-left: 2px solid #b45050;
+}
+
+.contact__form .btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
 }
 
 .contact__map {

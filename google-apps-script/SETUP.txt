@@ -1,0 +1,103 @@
+LUMEN PUBLICITY — CONNECT GOOGLE APPS SCRIPT
+=============================================
+
+What this does
+--------------
+When someone books a strategy call / consultation on the website:
+1. The booking is saved in a Google Sheet
+2. You get an email at lumenpublicity2026@gmail.com
+3. The client gets a branded confirmation email (with logo if you add it)
+
+
+STEP 1 — Create the Google Sheet
+--------------------------------
+1. Go to https://sheets.google.com while logged into lumenpublicity2026@gmail.com
+2. Create a new spreadsheet
+3. Name it: Lumen Publicity Bookings
+
+
+STEP 2 — Open Apps Script from the Sheet
+----------------------------------------
+1. In that spreadsheet, click Extensions → Apps Script
+2. Delete any default code in Code.gs
+3. Open the file in this project:
+   google-apps-script/Code.gs
+4. Copy ALL of its contents into the Apps Script editor
+5. Click the Save icon (or Ctrl+S)
+6. Name the project: Lumen Publicity Bookings
+
+
+STEP 3 — (Optional but recommended) Add the logo to confirmation emails
+-----------------------------------------------------------------------
+1. Go to https://drive.google.com
+2. Upload assets/logo.jpeg from this website folder
+3. Right-click the uploaded file → Share → General access → Anyone with the link → Viewer → Done
+4. Open the file → copy the ID from the URL:
+   https://drive.google.com/file/d/THIS_IS_THE_FILE_ID/view
+5. In Code.gs, set:
+   LOGO_FILE_ID: 'THIS_IS_THE_FILE_ID'
+
+
+STEP 4 — Deploy as a Web App
+----------------------------
+1. In Apps Script, click Deploy → New deployment
+2. Click the gear icon next to “Select type” → Web app
+3. Fill in:
+   - Description: Strategy call bookings
+   - Execute as: Me (lumenpublicity2026@gmail.com)
+   - Who has access: Anyone
+4. Click Deploy
+5. Review / authorize permissions when Google asks
+   (choose your Gmail account → Advanced → Go to Lumen Publicity Bookings → Allow)
+6. Copy the Web app URL
+   It looks like:
+   https://script.google.com/macros/s/AKfycb.../exec
+
+
+STEP 5 — Connect the website form
+---------------------------------
+1. Open: js/main.js
+2. Find:
+   const BOOKING_SCRIPT_URL = 'PASTE_YOUR_WEB_APP_URL_HERE';
+3. Replace PASTE_YOUR_WEB_APP_URL_HERE with the Web app URL from Step 4
+   Keep the quotes around the URL
+4. Save the file
+5. Refresh / republish your website
+
+
+STEP 6 — Test
+-------------
+Option A — From Apps Script:
+1. In the editor, select function testBooking_
+2. Click Run
+3. Check:
+   - A new row in the “Strategy Call Bookings” sheet tab
+   - An email in lumenpublicity2026@gmail.com
+   - A confirmation email (also to that inbox for the test)
+
+Option B — From the website:
+1. Open the Contact section
+2. Submit a real test booking with your own email
+3. Confirm sheet + both emails arrived
+
+
+If you edit the script later
+----------------------------
+After any code change:
+1. Deploy → Manage deployments
+2. Edit (pencil icon) → Version → New version
+3. Deploy
+(You usually keep the same Web app URL)
+
+
+Troubleshooting
+---------------
+- Form says something went wrong:
+  Check that BOOKING_SCRIPT_URL is correct and deployment access is “Anyone”.
+- No emails:
+  Check Spam. Confirm the script is executed as lumenpublicity2026@gmail.com.
+- Sheet empty:
+  Make sure the script was opened from Extensions → Apps Script inside the Sheet
+  (so the spreadsheet is bound to the script).
+- No logo in client email:
+  LOGO_FILE_ID is empty or incorrect, or Drive sharing is not set.

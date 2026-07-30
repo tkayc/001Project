@@ -1,12 +1,21 @@
 /* Lumen Publicity — interactions */
 
 (() => {
+  /**
+   * Paste your Google Apps Script Web App URL here after deploying.
+   * Example: 'https://script.google.com/macros/s/AKfycb.../exec'
+   * See google-apps-script/SETUP.txt for full steps.
+   */
+  const BOOKING_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxF0V80vaZjXlsNJ1AuvU_2CQydEe8lmo2mGeQbtwi51vr99oKB1I_-3vTrZ8sILLs/exec";
+
   const header = document.getElementById("header");
   const navToggle = document.getElementById("navToggle");
   const navMenu = document.getElementById("navMenu");
   const yearEl = document.getElementById("year");
   const form = document.getElementById("contactForm");
   const formSuccess = document.getElementById("formSuccess");
+  const formError = document.getElementById("formError");
+  const formSubmitBtn = document.getElementById("formSubmitBtn");
 
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
@@ -188,19 +197,71 @@
     );
   }
 
-  /* Contact form */
-  form?.addEventListener("submit", (e) => {
+  /* Contact form → Google Apps Script */
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-    form.reset();
-    if (formSuccess) {
-      formSuccess.hidden = false;
-      setTimeout(() => {
-        formSuccess.hidden = true;
-      }, 6000);
+
+    if (
+      !BOOKING_SCRIPT_URL ||
+      BOOKING_SCRIPT_URL.includes("PASTE_YOUR_WEB_APP_URL_HERE")
+    ) {
+      if (formError) {
+        formError.textContent =
+          "Booking is not connected yet. Please email lumenpublicity2026@gmail.com or call +27 65 582 8853.";
+        formError.hidden = false;
+      }
+      return;
+    }
+
+    const payload = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      business: form.business.value.trim(),
+      industry: form.industry.value,
+      message: form.message.value.trim(),
+    };
+
+    if (formSuccess) formSuccess.hidden = true;
+    if (formError) formError.hidden = true;
+
+    const originalLabel = formSubmitBtn?.textContent;
+    if (formSubmitBtn) {
+      formSubmitBtn.disabled = true;
+      formSubmitBtn.textContent = "Sending…";
+    }
+
+    try {
+      const response = await fetch(BOOKING_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if (!result.success) throw new Error(result.message || "Request failed");
+
+      form.reset();
+      if (formSuccess) {
+        formSuccess.hidden = false;
+        setTimeout(() => {
+          formSuccess.hidden = true;
+        }, 8000);
+      }
+    } catch (err) {
+      if (formError) {
+        formError.textContent =
+          "Something went wrong. Please try again or email us at lumenpublicity2026@gmail.com.";
+        formError.hidden = false;
+      }
+    } finally {
+      if (formSubmitBtn) {
+        formSubmitBtn.disabled = false;
+        formSubmitBtn.textContent = originalLabel || "Book a Free Strategy Call";
+      }
     }
   });
 })();
