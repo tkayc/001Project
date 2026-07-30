@@ -27,15 +27,23 @@ STEP 2 — Open Apps Script from the Sheet
 6. Name the project: Lumen Publicity Bookings
 
 
-STEP 3 — (Optional but recommended) Add the logo to confirmation emails
------------------------------------------------------------------------
+STEP 3 — Add the logo to BOTH emails (team + client)
+----------------------------------------------------
 1. Go to https://drive.google.com
 2. Upload assets/logo.jpeg from this website folder
 3. Right-click the uploaded file → Share → General access → Anyone with the link → Viewer → Done
-4. Open the file → copy the ID from the URL:
+4. Open the file. From the URL, copy ONLY the file ID:
    https://drive.google.com/file/d/THIS_IS_THE_FILE_ID/view
+   Example ID: 1IQDQMQBXjcBw1hP6WH_kAWN0OAL6xGme
 5. In Code.gs, set:
-   LOGO_FILE_ID: 'THIS_IS_THE_FILE_ID'
+   LOGO_FILE_ID: '1IQDQMQBXjcBw1hP6WH_kAWN0OAL6xGme'
+   (A full Drive URL also works now — the script extracts the ID automatically.)
+
+Why client emails were failing before:
+- MailApp cannot embed inline logos (use GmailApp — now fixed in Code.gs)
+- Pasting a full Drive URL into LOGO_FILE_ID used to break logo lookup
+  (now fixed — URL or ID both work)
+- After ANY script change you MUST redeploy a new version (Step 4 / redeploy note below)
 
 
 STEP 4 — Deploy as a Web App

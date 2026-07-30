@@ -220,6 +220,7 @@
     const payload = {
       name: form.name.value.trim(),
       email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
       business: form.business.value.trim(),
       industry: form.industry.value,
       message: form.message.value.trim(),

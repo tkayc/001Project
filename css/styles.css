@@ -1152,6 +1152,17 @@ address {
   transform: none;
 }
 
+.form-hint {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .contact__map {
   width: 100%;
   height: 320px;
