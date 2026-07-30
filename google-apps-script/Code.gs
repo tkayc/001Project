@@ -186,13 +186,17 @@ function sendTeamNotification_(data, timestamp) {
       '</div>' +
     '</div>';
 
-  // GmailApp supports inlineImages; MailApp does not
-  GmailApp.sendEmail(CONFIG.BUSINESS_EMAIL, subject, plainFallback_(data), {
+  var teamOptions = {
     htmlBody: html,
     name: CONFIG.BUSINESS_NAME,
-    replyTo: data.email,
-    inlineImages: brand.inlineImages
-  });
+    replyTo: data.email
+  };
+  if (brand.hasLogo) {
+    teamOptions.inlineImages = brand.inlineImages;
+  }
+
+  // GmailApp supports inlineImages; MailApp does not
+  GmailApp.sendEmail(CONFIG.BUSINESS_EMAIL, subject, plainFallback_(data), teamOptions);
 }
 
 function sendClientConfirmation_(data, timestamp) {
@@ -234,17 +238,22 @@ function sendClientConfirmation_(data, timestamp) {
       '</p>' +
     '</div>';
 
-  GmailApp.sendEmail(data.email, subject, plainFallback_(data), {
+  var clientOptions = {
     htmlBody: html,
     name: CONFIG.BUSINESS_NAME,
-    replyTo: CONFIG.BUSINESS_EMAIL,
-    inlineImages: brand.inlineImages
-  });
+    replyTo: CONFIG.BUSINESS_EMAIL
+  };
+  if (brand.hasLogo) {
+    clientOptions.inlineImages = brand.inlineImages;
+  }
+
+  GmailApp.sendEmail(data.email, subject, plainFallback_(data), clientOptions);
 }
 
 function emailBrandHeader_() {
   var logoCid = 'lumenLogo';
   var inlineImages = {};
+  var hasLogo = false;
   var logoHtml =
     '<div style="text-align:center;margin:0 0 16px;">' +
       '<div style="display:inline-block;width:88px;height:88px;border-radius:50%;background:#1c2b48;color:#ffffff;' +
@@ -253,6 +262,7 @@ function emailBrandHeader_() {
 
   var logoBlob = getLogoBlob_();
   if (logoBlob) {
+    hasLogo = true;
     inlineImages[logoCid] = logoBlob;
     logoHtml =
       '<img src="cid:' + logoCid + '" alt="' + escapeHtml_(CONFIG.BUSINESS_NAME) + '" width="88" height="88" ' +
@@ -261,7 +271,8 @@ function emailBrandHeader_() {
 
   return {
     logoHtml: logoHtml,
-    inlineImages: inlineImages
+    inlineImages: inlineImages,
+    hasLogo: hasLogo
   };
 }
 

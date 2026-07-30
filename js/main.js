@@ -236,14 +236,18 @@
     }
 
     try {
-      const response = await fetch(BOOKING_SCRIPT_URL, {
+      /**
+       * Google Apps Script web apps redirect and block reading the response
+       * from browsers (CORS). mode:"no-cors" still delivers the booking;
+       * we validate fields client-side and treat a completed send as success.
+       */
+      await fetch(BOOKING_SCRIPT_URL, {
         method: "POST",
+        mode: "no-cors",
+        cache: "no-cache",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload),
       });
-
-      const result = await response.json();
-      if (!result.success) throw new Error(result.message || "Request failed");
 
       form.reset();
       if (formSuccess) {
@@ -253,6 +257,7 @@
         }, 8000);
       }
     } catch (err) {
+      console.error("Booking submit failed:", err);
       if (formError) {
         formError.textContent =
           "Something went wrong. Please try again or email us at lumenpublicity2026@gmail.com.";
