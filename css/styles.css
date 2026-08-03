@@ -639,14 +639,14 @@ address {
   cursor: default;
 }
 
-.industry-card::before {
-  content: "";
+.industry-card__img {
   position: absolute;
   inset: 0;
-  background-image: var(--bg);
-  background-size: cover;
-  background-position: center;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.7s var(--ease);
+  z-index: 0;
 }
 
 .industry-card::after {
@@ -658,15 +658,16 @@ address {
     rgba(20, 31, 56, 0.88) 0%,
     rgba(20, 31, 56, 0.2) 70%
   );
+  z-index: 1;
 }
 
-.industry-card:hover::before {
+.industry-card:hover .industry-card__img {
   transform: scale(1.06);
 }
 
 .industry-card h3 {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   font-family: var(--font-serif);
   font-size: 1.35rem;
   font-weight: 500;
