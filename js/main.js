@@ -211,7 +211,7 @@
     ) {
       if (formError) {
         formError.textContent =
-          "Booking is not connected yet. Please email lumenpublicity2026@gmail.com or call +27 65 582 8853.";
+          "Booking is not connected yet. Please email lumenpublicity2026@gmail.com or WhatsApp +27 71 738 0983.";
         formError.hidden = false;
       }
       return;

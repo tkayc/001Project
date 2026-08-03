@@ -12,7 +12,8 @@
 
 var CONFIG = {
   BUSINESS_EMAIL: 'lumenpublicity2026@gmail.com',
-  BUSINESS_PHONE: '+27 65 582 8853',
+  BUSINESS_PHONE: '+27 71 738 0983',
+  BUSINESS_WHATSAPP: 'https://wa.me/27717380983',
   BUSINESS_NAME: 'Lumen Publicity',
   SHEET_NAME: 'Strategy Call Bookings',
   /**
@@ -269,7 +270,7 @@ function emailBrandFooter_() {
     '<p style="margin:24px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;color:#1c2b48;text-align:center;">' +
       '<strong>' + escapeHtml_(CONFIG.BUSINESS_NAME) + '</strong><br>' +
       '<a href="mailto:' + CONFIG.BUSINESS_EMAIL + '" style="color:#1c2b48;text-decoration:none;">' + CONFIG.BUSINESS_EMAIL + '</a><br>' +
-      '<a href="tel:+27655828853" style="color:#1c2b48;text-decoration:none;">' + CONFIG.BUSINESS_PHONE + '</a>' +
+      '<a href="' + CONFIG.BUSINESS_WHATSAPP + '" style="color:#1c2b48;text-decoration:none;">WhatsApp ' + CONFIG.BUSINESS_PHONE + '</a>' +
     '</p>'
   );
 }
@@ -350,7 +351,7 @@ function testBooking() {
       contents: JSON.stringify({
         name: 'Test Client',
         email: CONFIG.BUSINESS_EMAIL,
-        phone: '+27 65 582 8853',
+        phone: '+27 71 738 0983',
         business: 'Sample Boutique Hotel',
         industry: 'Boutique Hotel',
         message: 'This is a test strategy call booking from Apps Script.'
